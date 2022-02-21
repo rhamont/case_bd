@@ -27,25 +27,25 @@ query_eleicoes_munic <- bdplyr("br_tse_eleicoes.resultados_partido_municipio")
 df_eleicoes_munic <- bd_collect(query_eleicoes_munic)
 
 
-#Apagando vari·veis irrelevantes para a an·lise
+#Apagando vari√°veis irrelevantes para a an√°lise
 
 df_dp_orc = subset(df_dp_orc, select = -c(estagio, portaria, conta, estagio_bd, id_conta_bd, conta_bd))
 df_re_orc = subset(df_re_orc, select = -c(estagio, portaria, conta, estagio_bd, id_conta_bd, conta_bd))
 
 
-#Renomeando as vari·veis de valor
+#Renomeando as vari√°veis de valor
 
 df_dp_orc <- rename(df_dp_orc, valor_dp = valor)
 df_re_orc <- rename(df_re_orc, valor_re = valor)
 
 
-#Transformando a vari·vel de id_municipio em numÈrica
+#Transformando a vari√°vel de id_municipio em num√©rica
 
 df_dp_orc$id_municipio <- as.integer(df_dp_orc$id_municipio)
 df_re_orc$id_municipio <- as.integer(df_re_orc$id_municipio)
 
 
-#Simplificando os dados da base de eleiÁıes municipais
+#Simplificando os dados da base de elei√ß√µes municipais
 
 df_eleicoes_munic <- filter(df_eleicoes_munic, cargo == "presidente", turno == 1, sigla_partido == c("PT", "PSDB"))
 
@@ -87,7 +87,7 @@ df_re_orc <- filter(df_re_orc, 1995 <= ano, ano <= 2018)
 df_dp_orc <- filter(df_dp_orc, 1995 <= ano, ano <= 2018)
 
 
-#Calculando mÈdia de receitas e despesas orÁament·rias para os quatro anos anteriores a cada uma das eleicıes presidenciais
+#Calculando m√©dia de receitas e despesas or√ßament√°rias para os quatro anos anteriores a cada uma das eleic√µes presidenciais
 
 df_dp_orc$num_eleicao <- 0
 
@@ -129,20 +129,20 @@ orcamento <- orcamento[complete.cases(orcamento), ]
 orcamento$excedente_orc <- orcamento$receitas_orc_media - orcamento$despesas_orc_media
 
 
-#Fazendo o merge da base de orÁamento e de resultados das eleiÁıes
+#Fazendo o merge da base de or√ßamento e de resultados das elei√ß√µes
 
 final <- merge(orcamento, df_eleicoes_munic, by = c('num_eleicao', 'sigla_uf'), sort = TRUE, all=TRUE)
 summary(final)
 
 
-#Criando a vari·vel de correlaÁ„o entre o excedente orÁament·rio e o n˙mero de votos nominais em cada partido (PT, PSDB)
+#Criando a vari√°vel de correla√ß√£o entre o excedente or√ßament√°rio e o n√∫mero de votos nominais em cada partido (PT, PSDB)
 
 final <- final %>% 
   group_by(sigla_uf) %>%
   summarise(corr_pt = cor(excedente_orc, PT_uf), corr_psdb = cor(excedente_orc, PSDB_uf))
 
 
-#Codificando os Estados atravÈs da sigla_uf
+#Codificando os Estados atrav√©s da sigla_uf
 
 final$cod_uf <- 0
 final$cod_uf <- ifelse(final$sigla_uf=="RO", 11, final$cod_uf)
@@ -174,36 +174,36 @@ final$cod_uf <- ifelse(final$sigla_uf=="GO", 52, final$cod_uf)
 final$cod_uf <- ifelse(final$sigla_uf=="DF", 53, final$cod_uf)
 
 final$nome_uf <- "a"
-final$nome_uf <- ifelse(final$sigla_uf=="RO", "RondÙnia", final$nome_uf)
+final$nome_uf <- ifelse(final$sigla_uf=="RO", "Rond√¥nia", final$nome_uf)
 final$nome_uf <- ifelse(final$sigla_uf=="AC", "Acre", final$nome_uf)
-final$nome_uf <- ifelse(final$sigla_uf=="AM", "AmazÙnas", final$nome_uf)
+final$nome_uf <- ifelse(final$sigla_uf=="AM", "Amaz√¥nas", final$nome_uf)
 final$nome_uf <- ifelse(final$sigla_uf=="RR", "Roraima", final$nome_uf)
-final$nome_uf <- ifelse(final$sigla_uf=="PA", "Par·", final$nome_uf)
-final$nome_uf <- ifelse(final$sigla_uf=="AP", "Amap·", final$nome_uf)
+final$nome_uf <- ifelse(final$sigla_uf=="PA", "Par√°", final$nome_uf)
+final$nome_uf <- ifelse(final$sigla_uf=="AP", "Amap√°", final$nome_uf)
 final$nome_uf <- ifelse(final$sigla_uf=="TO", "Tocantins", final$nome_uf)
-final$nome_uf <- ifelse(final$sigla_uf=="MA", "Maranh„o", final$nome_uf)
-final$nome_uf <- ifelse(final$sigla_uf=="PI", "PiauÌ", final$nome_uf)
-final$nome_uf <- ifelse(final$sigla_uf=="CE", "Cear·", final$nome_uf)
+final$nome_uf <- ifelse(final$sigla_uf=="MA", "Maranh√£o", final$nome_uf)
+final$nome_uf <- ifelse(final$sigla_uf=="PI", "Piau√≠", final$nome_uf)
+final$nome_uf <- ifelse(final$sigla_uf=="CE", "Cear√°", final$nome_uf)
 final$nome_uf <- ifelse(final$sigla_uf=="RN", "Rio Grande do Norte", final$nome_uf)
-final$nome_uf <- ifelse(final$sigla_uf=="PB", "ParaÌba", final$nome_uf)
+final$nome_uf <- ifelse(final$sigla_uf=="PB", "Para√≠ba", final$nome_uf)
 final$nome_uf <- ifelse(final$sigla_uf=="PE", "Pernambuco", final$nome_uf)
 final$nome_uf <- ifelse(final$sigla_uf=="AL", "Alagoas", final$nome_uf)
 final$nome_uf <- ifelse(final$sigla_uf=="SE", "Sergipe", final$nome_uf)
 final$nome_uf <- ifelse(final$sigla_uf=="BA", "Bahia", final$nome_uf)
 final$nome_uf <- ifelse(final$sigla_uf=="MG", "Minas Gerais", final$nome_uf)
-final$nome_uf <- ifelse(final$sigla_uf=="ES", "EspÌrito Santo", final$nome_uf)
+final$nome_uf <- ifelse(final$sigla_uf=="ES", "Esp√≠rito Santo", final$nome_uf)
 final$nome_uf <- ifelse(final$sigla_uf=="RJ", "Rio de Janeiro", final$nome_uf)
-final$nome_uf <- ifelse(final$sigla_uf=="SP", "S„o Paulo", final$nome_uf)
-final$nome_uf <- ifelse(final$sigla_uf=="PR", "Paran·", final$nome_uf)
+final$nome_uf <- ifelse(final$sigla_uf=="SP", "S√£o Paulo", final$nome_uf)
+final$nome_uf <- ifelse(final$sigla_uf=="PR", "Paran√°", final$nome_uf)
 final$nome_uf <- ifelse(final$sigla_uf=="SC", "Santa Catarina", final$nome_uf)
 final$nome_uf <- ifelse(final$sigla_uf=="RS", "Rio Grande do Sul", final$nome_uf)
 final$nome_uf <- ifelse(final$sigla_uf=="MS", "Mato Grosso do Sul", final$nome_uf)
 final$nome_uf <- ifelse(final$sigla_uf=="MT", "Mato Grosso", final$nome_uf)
-final$nome_uf <- ifelse(final$sigla_uf=="GO", "Goi·s", final$nome_uf)
+final$nome_uf <- ifelse(final$sigla_uf=="GO", "Goi√°s", final$nome_uf)
 final$nome_uf <- ifelse(final$sigla_uf=="DF", "Distrito Federal", final$nome_uf)
 
 
-#Preparando para fazer os mapas de correlaÁ„o
+#Preparando para fazer os mapas de correla√ß√£o
 
 states <- read_country(year = 2019)
 states$name_state <- tolower(states$name_state)
@@ -211,16 +211,16 @@ final$nome_uf <- tolower(final$nome_uf)
 states <- dplyr::left_join(states, final, by = c("name_state" = "nome_uf")); states
 
 
-#Mapa de correlaÁ„o do n˙mero de votos do PT com o excedente orÁament·rio
+#Mapa de correla√ß√£o do n√∫mero de votos do PT com o excedente or√ßament√°rio
 
 png(filename="corr_votos_exc_orc_pt.png", height=20, width=20, unit="cm", res=200)
   states %>% ggplot() + 
     geom_sf(aes(fill = corr_pt), size = .15) +   
-    scale_fill_gradient(low = "red", high = "blue", name = "CorrelaÁ„o", limits = c(-1, 1)) + 
+    scale_fill_gradient(low = "red", high = "blue", name = "Correla√ß√£o", limits = c(-1, 1)) + 
     xlab("") +  
     ylab("") +
     geom_sf_label(aes(label = abbrev_state), label.padding = unit(0.5, "mm"),size = 3) + 
-    labs(title = "CorrelaÁ„o de votos nominais no PT e excedente orÁament·rio") +
+    labs(title = "Correla√ß√£o de votos nominais no PT e excedente or√ßament√°rio") +
     theme(plot.caption = element_text(hjust = 0, face= "italic"), 
           plot.title.position = "plot", 
           plot.caption.position =  "plot") + 
@@ -228,22 +228,18 @@ png(filename="corr_votos_exc_orc_pt.png", height=20, width=20, unit="cm", res=20
 dev.off()
 
 
-#Mapa de correlaÁ„o do n˙mero de votos do PSDB com o excedente orÁament·rio
+#Mapa de correla√ß√£o do n√∫mero de votos do PSDB com o excedente or√ßament√°rio
 
 png(filename="corr_votos_exc_orc_psdb.png", height=20, width=20, unit="cm", res=200)
   states %>% ggplot() + 
     geom_sf(aes(fill = corr_psdb), size = .15) +   
-    scale_fill_gradient(low = "red", high = "blue", name = "CorrelaÁ„o", limits = c(-1, 1)) + 
+    scale_fill_gradient(low = "red", high = "blue", name = "Correla√ß√£o", limits = c(-1, 1)) + 
     xlab("") +  
     ylab("") +
     geom_sf_label(aes(label = abbrev_state), label.padding = unit(0.5, "mm"), size = 3) + 
-    labs(title = "CorrelaÁ„o de votos nominais no PSDB e excedente orÁament·rio") +
+    labs(title = "Correla√ß√£o de votos nominais no PSDB e excedente or√ßament√°rio") +
     theme(plot.caption = element_text(hjust = 0, face= "italic"), 
           plot.title.position = "plot", 
           plot.caption.position =  "plot") + 
     theme(legend.position = "bottom") + theme(legend.title = element_text(size = 10), legend.text=element_text(size=10))
 dev.off()
-
-
-  
-getwd()
